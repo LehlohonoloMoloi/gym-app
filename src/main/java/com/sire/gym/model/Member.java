@@ -42,8 +42,7 @@ public class Member {
     @Column(nullable = false)
     private LocalDate joinedDate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "membership_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private Membership membership;
 
 }
