@@ -1,5 +1,6 @@
 package com.sire.gym.model;
 
+import com.sire.gym.strategy.DurationStrategy;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +12,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,5 +50,14 @@ public class Membership {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
+
+    @Transient
+    private DurationStrategy durationStrategy;
+
+    @PrePersist
+    public void setupMembership() {
+        this.startDate = LocalDate.now();
+        this.endDate = durationStrategy.getEndDate();
+    }
 
 }
