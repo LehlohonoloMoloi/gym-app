@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,5 +43,10 @@ public class Member {
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private Membership membership;
+
+    @PrePersist
+    public void prePersist() {
+        this.joinedDate = LocalDate.now();
+    }
 
 }
