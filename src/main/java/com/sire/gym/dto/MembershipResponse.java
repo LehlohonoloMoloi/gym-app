@@ -6,5 +6,4 @@ public record MembershipResponse(
         String status,
         String startDate,
         String endDate,
-        Long memberId) {
-}
+        Long memberId) {}

@@ -1,4 +1,16 @@
 package com.sire.gym.dto;
 
-public record CreateMemberRequest(String firstName, String lastName, String email, String phoneNumber) {
-}
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateMemberRequest(
+        @NotBlank(message = "First name is required")
+        String firstName,
+
+        @NotBlank(message = "Last name is required")
+        String lastName,
+
+        @Email(message = "Invalid email")
+        String email,
+
+        String phoneNumber) {}

@@ -6,6 +6,5 @@ public record MemberResponse(
         String lastName,
         String email,
         String phoneNumber,
-        String joinedDate) {
-}
+        String joinedDate) {}
 
