@@ -1,8 +1,10 @@
-package com.sire.gym.util;
+package com.sire.gym.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public enum MembershipDuration {
 
     BASIC(1),
@@ -10,9 +12,5 @@ public enum MembershipDuration {
     PREMIUM(12);
 
     private final Integer duration;
-
-    MembershipDuration(Integer duration) {
-        this.duration = duration;
-    }
 
 }

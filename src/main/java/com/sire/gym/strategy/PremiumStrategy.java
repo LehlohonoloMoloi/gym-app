@@ -1,6 +1,6 @@
 package com.sire.gym.strategy;
 
-import com.sire.gym.util.MembershipDuration;
+import com.sire.gym.common.MembershipDuration;
 
 import java.time.LocalDate;
 
