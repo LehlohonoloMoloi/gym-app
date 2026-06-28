@@ -3,15 +3,13 @@ package com.sire.gym.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateMemberRequest(
-        @NotBlank(message = "First name is required")
+public record UpdateMemberRequest(
         String firstName,
 
-        @NotBlank(message = "Last name is required")
         String lastName,
+
+        String phoneNumber,
 
         @Email(message = "Invalid email")
         @NotBlank(message = "Email is required")
-        String email,
-
-        String phoneNumber) {}
+        String email) {}
