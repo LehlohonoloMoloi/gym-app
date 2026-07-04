@@ -28,6 +28,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
 
+    private final String MEMBER_NOT_FOUND_MESSAGE = "Member with ID %d not found";
+
     @Override
     public ApiResponse<MemberResponse> createMember(final CreateMemberRequest request) {
         if (memberExists(request.email())) {
@@ -50,21 +52,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ApiResponse<MemberResponse> getMemberById(final String email) {
-        Member member = getMember(email);
+    public ApiResponse<MemberResponse> getMemberById(final Long memberId) {
+        Member member = getMember(memberId);
         MemberResponse memberResponse = memberMapper.toMemberResponse(member);
         return generateSuccessResponse(memberResponse, ResponseMessage.RETRIEVE_MEMBER_SUCCESS.getMessage());
     }
 
     @Override
     @Transactional
-    public ApiResponse<MemberResponse> updateMember(final UpdateMemberRequest request) {
-        String memberEmail = request.email();
-        if (!memberExists(memberEmail)) {
-            throw new MemberNotFoundException(String.format("Member with email %s not found", memberEmail));
+    public ApiResponse<MemberResponse> updateMember(final Long memberId, UpdateMemberRequest request) {
+        if (memberNotExists(memberId)) {
+            throw new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId));
         }
 
-        Member existingMember = getMember(memberEmail);
+        Member existingMember = getMember(memberId);
         memberMapper.updateMemberFromRequest(request, existingMember);
         Member updatedMember = memberRepository.save(existingMember);
         MemberResponse response = memberMapper.toMemberResponse(updatedMember);
@@ -73,22 +74,26 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public ApiResponse<Void> deleteMember(final String email) {
-        if (!memberExists(email)) {
-            throw new MemberNotFoundException(String.format("Member with email %s not found", email));
+    public ApiResponse<Void> deleteMember(final Long memberId) {
+        if (memberNotExists(memberId)) {
+            throw new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId));
         }
 
-        memberRepository.deleteByEmail(email);
+        memberRepository.deleteById(memberId);
         return generateSuccessResponse(ResponseMessage.DELETE_MEMBER_SUCCESS.getMessage());
     }
 
-    private Member getMember(final String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberNotFoundException(String.format("Member with email %s not found", email)));
+    private Member getMember(final Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId)));
     }
 
-    private boolean memberExists(final String email) {
-        return memberRepository.existsByEmail(email);
+    private boolean memberNotExists(final Long memberId) {
+        return !memberRepository.existsById(memberId);
+    }
+
+    private boolean memberExists(final String memberEmail) {
+        return memberRepository.existsByEmail(memberEmail);
     }
 
 }

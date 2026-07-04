@@ -3,6 +3,7 @@ package com.sire.gym.handler;
 import com.sire.gym.common.Status;
 import com.sire.gym.controller.MemberController;
 import com.sire.gym.dto.ApiResponse;
+import com.sire.gym.exception.MemberExistsException;
 import com.sire.gym.exception.MemberNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class MemberExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
                 .findFirst()
@@ -46,6 +47,12 @@ public class MemberExceptionHandler {
                 .orElse("Constraint violation");
         ApiResponse<Void> response = buildErrorResponse(message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MemberExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMemberExistsException(MemberExistsException ex) {
+        ApiResponse<Void> response = buildErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     private ApiResponse<Void> buildErrorResponse(String message) {

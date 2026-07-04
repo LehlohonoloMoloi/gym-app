@@ -6,14 +6,13 @@ import com.sire.gym.dto.MemberResponse;
 import com.sire.gym.dto.UpdateMemberRequest;
 import com.sire.gym.service.MemberService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
 
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/gym/members")
@@ -46,26 +44,27 @@ public class MemberController {
         return CompletableFuture.supplyAsync(() -> memberService.getMembers(page, size));
     }
 
-    @GetMapping("/member")
-    public CompletableFuture<ResponseEntity<ApiResponse<MemberResponse>>> getMemberByEmail(@RequestParam String email) {
+    @GetMapping("/{id}")
+    public CompletableFuture<ResponseEntity<ApiResponse<MemberResponse>>> getMemberById(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
-            ApiResponse<MemberResponse> response = memberService.getMemberById(email);
+            ApiResponse<MemberResponse> response = memberService.getMemberById(id);
             return new ResponseEntity<>(response, HttpStatus.OK);
         });
     }
 
-    @PutMapping("/member")
-    public CompletableFuture<ResponseEntity<ApiResponse<MemberResponse>>> updateMember(@RequestBody @Valid UpdateMemberRequest request) {
+    @PutMapping("/{id}")
+    public CompletableFuture<ResponseEntity<ApiResponse<MemberResponse>>> updateMember(
+            @PathVariable Long id, @RequestBody @Valid UpdateMemberRequest request) {
         return CompletableFuture.supplyAsync(() -> {
-            ApiResponse<MemberResponse> response = memberService.updateMember(request);
+            ApiResponse<MemberResponse> response = memberService.updateMember(id, request);
             return new ResponseEntity<>(response, HttpStatus.OK);
         });
     }
 
-    @DeleteMapping("/member")
-    public CompletableFuture<ResponseEntity<ApiResponse<Void>>> deleteMember(@RequestParam @Email(message = "Invalid email") String email) {
+    @DeleteMapping("/{id}")
+    public CompletableFuture<ResponseEntity<ApiResponse<Void>>> deleteMember(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
-            ApiResponse<Void> response = memberService.deleteMember(email);
+            ApiResponse<Void> response = memberService.deleteMember(id);
             return new ResponseEntity<>(response, HttpStatus.OK);
         });
     }
