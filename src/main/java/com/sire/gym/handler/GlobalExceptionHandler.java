@@ -5,16 +5,19 @@ import com.sire.gym.controller.MemberController;
 import com.sire.gym.dto.ApiResponse;
 import com.sire.gym.exception.MemberExistsException;
 import com.sire.gym.exception.MemberNotFoundException;
+import com.sire.gym.exception.MembershipExistsException;
+import com.sire.gym.exception.MembershipNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(basePackageClasses = {MemberController.class})
-public class MemberExceptionHandler {
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleMemberNotFoundException(MemberNotFoundException ex) {
@@ -53,6 +56,25 @@ public class MemberExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleMemberExistsException(MemberExistsException ex) {
         ApiResponse<Void> response = buildErrorResponse(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MembershipExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMembershipExistsException(MembershipExistsException ex) {
+        ApiResponse<Void> response = buildErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MembershipNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMembershipNotFoundException(MembershipNotFoundException ex) {
+        ApiResponse<Void> response = buildErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        String message = "Malformed JSON request: " + ex.getMostSpecificCause().getMessage();
+        ApiResponse<Void> response = buildErrorResponse(message);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private ApiResponse<Void> buildErrorResponse(String message) {

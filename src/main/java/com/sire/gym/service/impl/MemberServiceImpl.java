@@ -10,6 +10,7 @@ import com.sire.gym.mapper.MemberMapper;
 import com.sire.gym.model.Member;
 import com.sire.gym.repository.MemberRepository;
 import com.sire.gym.service.MemberService;
+import com.sire.gym.util.ExceptionMessage;
 import com.sire.gym.util.ResponseMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,6 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
-
-    private final String MEMBER_NOT_FOUND_MESSAGE = "Member with ID %d not found";
 
     @Override
     public ApiResponse<MemberResponse> createMember(final CreateMemberRequest request) {
@@ -61,10 +60,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public ApiResponse<MemberResponse> updateMember(final Long memberId, UpdateMemberRequest request) {
-        if (memberNotExists(memberId)) {
-            throw new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId));
-        }
-
         Member existingMember = getMember(memberId);
         memberMapper.updateMemberFromRequest(request, existingMember);
         Member updatedMember = memberRepository.save(existingMember);
@@ -76,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public ApiResponse<Void> deleteMember(final Long memberId) {
         if (memberNotExists(memberId)) {
-            throw new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId));
+            throw new MemberNotFoundException(String.format(ExceptionMessage.MEMBER_NOT_FOUND.getMessage(), memberId));
         }
 
         memberRepository.deleteById(memberId);
@@ -85,7 +80,7 @@ public class MemberServiceImpl implements MemberService {
 
     private Member getMember(final Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException(String.format(MEMBER_NOT_FOUND_MESSAGE, memberId)));
+                .orElseThrow(() -> new MemberNotFoundException(String.format(ExceptionMessage.MEMBER_NOT_FOUND.getMessage(), memberId)));
     }
 
     private boolean memberNotExists(final Long memberId) {

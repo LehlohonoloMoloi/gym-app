@@ -15,8 +15,6 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,9 +22,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "membership")
 public class Membership {
     @Id
@@ -47,17 +43,23 @@ public class Membership {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, orphanRemoval = true)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @Transient
     private DurationStrategy durationStrategy;
 
+    public Membership(MembershipType type, DurationStrategy durationStrategy) {
+        this.type = type;
+        this.durationStrategy = durationStrategy;
+    }
+
     @PrePersist
     public void setupMembership() {
         this.startDate = LocalDate.now();
         this.endDate = durationStrategy.getEndDate();
+        this.status = MembershipStatus.ACTIVE;
     }
 
 }

@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/gym/members")
+@RequestMapping("/gym/api/v1/members")
 public class MemberController {
 
     private final MemberService memberService;
