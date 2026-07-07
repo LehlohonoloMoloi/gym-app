@@ -1,4 +1,4 @@
-package com.sire.gym.model.security;
+package com.sire.gym.model;
 
 public enum Role {
     ROLE_USER,

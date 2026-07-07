@@ -1,4 +1,4 @@
-package com.sire.gym.model.security;
+package com.sire.gym.model;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "users")
 public class User {
 

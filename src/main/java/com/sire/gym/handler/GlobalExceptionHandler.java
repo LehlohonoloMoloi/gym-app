@@ -7,6 +7,7 @@ import com.sire.gym.exception.MemberExistsException;
 import com.sire.gym.exception.MemberNotFoundException;
 import com.sire.gym.exception.MembershipExistsException;
 import com.sire.gym.exception.MembershipNotFoundException;
+import com.sire.gym.exception.UsernameExistsException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,6 +76,12 @@ public class GlobalExceptionHandler {
         String message = "Malformed JSON request: " + ex.getMostSpecificCause().getMessage();
         ApiResponse<Void> response = buildErrorResponse(message);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUsernameExistsException(UsernameExistsException ex) {
+        ApiResponse<Void> response = buildErrorResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     private ApiResponse<Void> buildErrorResponse(String message) {

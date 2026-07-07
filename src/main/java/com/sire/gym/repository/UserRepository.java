@@ -1,6 +1,6 @@
-package com.sire.gym.repository.security;
+package com.sire.gym.repository;
 
-import com.sire.gym.model.security.User;
+import com.sire.gym.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
