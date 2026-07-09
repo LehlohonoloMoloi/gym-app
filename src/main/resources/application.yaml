@@ -23,3 +23,9 @@ server:
 jwt:
   secret-key: ${JWT_SECRET}
   expiration-ms: 3600000 # 1 hour in milliseconds
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
